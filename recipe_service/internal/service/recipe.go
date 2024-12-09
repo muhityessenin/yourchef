@@ -10,6 +10,10 @@ type RecipeService struct {
 	RecipeRepository interf.RecipeRepository
 }
 
+func (p RecipeService) GetRandomRecipes() ([]recipe.Entity, error) {
+	return p.RecipeRepository.GetRandomRecipes()
+}
+
 func (p RecipeService) GetRecipes(ingredients []string) ([]recipe.Entity, error) {
 	return p.RecipeRepository.GetRecipes(ingredients)
 }

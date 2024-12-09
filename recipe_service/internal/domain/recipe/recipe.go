@@ -26,4 +26,5 @@ type Entity struct {
 	Ingredients         []Ingredient `json:"ingredients"`
 	Instructions        []Step       `json:"instructions"`
 	UsedIngredientCount int          `json:"usedIngredientCount"`
+	ImageURL            string       `json:"imageUrl"`
 }

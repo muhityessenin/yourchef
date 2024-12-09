@@ -24,7 +24,6 @@ func (handler *RecipeHandler) GetRecipeList(ctx *gin.Context) {
 	var input struct {
 		Input []string `json:"input"`
 	}
-
 	if err := ctx.BindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -58,5 +57,9 @@ func (handler *RecipeHandler) GetRecipeById(ctx *gin.Context) {
 }
 
 func (handler *RecipeHandler) GetRandomRecipes(ctx *gin.Context) {
-
+	res, err := handler.RecipeService.GetRandomRecipes()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	ctx.JSON(http.StatusOK, res)
 }

@@ -24,6 +24,48 @@ type RecipeRepository struct {
 	db *sqlx.DB
 }
 
+type randomRecipeResponse struct {
+	Recipes []struct {
+		ID    int    `json:"id"`
+		Title string `json:"title"`
+		Image string `json:"image"`
+	} `json:"recipes"`
+}
+
+func (p RecipeRepository) GetRandomRecipes() ([]recipe.Entity, error) {
+	url := fmt.Sprintf("https://api.spoonacular.com/recipes/random?number=5&apiKey=%s", os.Getenv("API_KEY"))
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get random recipe: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("non-200 status code: %d, body: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	var result randomRecipeResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %v", err)
+	}
+
+	if len(result.Recipes) == 0 {
+		return nil, fmt.Errorf("no recipes found")
+	}
+
+	entities := make([]recipe.Entity, 0, len(result.Recipes))
+	for _, r := range result.Recipes {
+		entity := recipe.Entity{
+			ID:       r.ID,
+			Title:    r.Title,
+			ImageURL: r.Image,
+		}
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+
 func parseRecipes(apiResponse []byte) ([]recipe.Entity, error) {
 	var recipes []recipe.Entity
 	if err := json.Unmarshal(apiResponse, &recipes); err != nil {
