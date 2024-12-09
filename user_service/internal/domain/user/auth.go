@@ -4,11 +4,12 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
 
-var jwtSecret = []byte("ieqriebqFNEIvbv9ewvnon3u543v34248jnveibviewpvb")
+var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateToken(user *Entity) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
