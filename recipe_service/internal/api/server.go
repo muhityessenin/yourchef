@@ -18,7 +18,7 @@ func NewServer(recipeHandler *handler.RecipeHandler) *Server {
 	router.Use(gin.Recovery())
 	router.Use(MethodNotAllowedMiddleware())
 
-	routes.InitRoutes(router.Group("/recipe"), recipeHandler)
+	routes.InitRoutes(router.Group("/"), recipeHandler)
 
 	return &Server{router}
 }

@@ -8,5 +8,8 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 	r := routing.SetupRouter(cfg)
-	r.Run(":8080") // gateway слушает на порту 8080
+	err := r.Run(":8080")
+	if err != nil {
+		return
+	}
 }

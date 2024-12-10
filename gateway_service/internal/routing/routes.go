@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"fmt"
 	"gateway_service/internal/config"
 	"gateway_service/internal/middleware"
 	"gateway_service/internal/proxy"
@@ -15,17 +16,33 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	// Авторизованные маршруты
-	// Проверяем токен
+	// Публичные маршруты для регистрации и логина
+	// Эти маршруты проксируем в user_service без проверки токена
+	r.POST("/register", func(c *gin.Context) {
+		// Обновляем путь, если необходимо. Предположим, в user_service маршрут /register без /users
+		// Если в user_service маршрут "/register", то можно не менять путь.
+		c.Request.URL.Path = "/register"
+		proxy.ProxyRequest(c, cfg.UserServiceURL)
+	})
+
+	r.POST("/login", func(c *gin.Context) {
+		c.Request.URL.Path = "/login"
+		fmt.Println(c.Request.URL.Path)
+		fmt.Println(cfg.UserServiceURL)
+		fmt.Println(cfg.RecipeServiceURL)
+		proxy.ProxyRequest(c, cfg.UserServiceURL)
+	})
 	authGroup := r.Group("/")
-	authGroup.Use(middleware.AuthMiddleware(cfg.JWTSecret))
+	authGroup.Use(middleware.AuthMiddleware("ieqriebqFNEIvbv9ewvnon3u543v34248jnveibviewpvb"))
+	fmt.Println(cfg.JWTSecret)
 	{
-		// Допустим, /recipes доступны для всех авторизованных
-		authGroup.Any("/recipes/*path", func(c *gin.Context) {
+		authGroup.Any("recipe/*path", func(c *gin.Context) {
+			path := c.Param("path")
+			c.Request.URL.Path = path
+
 			proxy.ProxyRequest(c, cfg.RecipeServiceURL)
 		})
 
-		// /users доступны только админам
 		adminGroup := authGroup.Group("/users")
 		adminGroup.Use(middleware.RoleMiddleware("admin"))
 		{

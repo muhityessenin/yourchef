@@ -6,7 +6,7 @@ import (
 )
 
 func InitRoutes(router *gin.RouterGroup, recipeHandler *handler.RecipeHandler) {
-	router.POST("/", recipeHandler.GetRecipeList)
+	router.POST("/r", recipeHandler.GetRecipeList)
 	router.GET("/:id", recipeHandler.GetRecipeById)
 	router.GET("/random", recipeHandler.GetRandomRecipes)
 }
