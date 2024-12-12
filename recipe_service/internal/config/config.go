@@ -32,6 +32,7 @@ func LoadConfig() (cfg Config, err error) {
 	cfg.User = os.Getenv("DB_USER")
 	cfg.Password = os.Getenv("DB_PASSWORD")
 	cfg.Name = os.Getenv("DB_NAME")
+	fmt.Println(cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
 	if err = envconfig.Process("", &cfg); err != nil {
 		return
 	}

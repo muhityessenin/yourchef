@@ -22,7 +22,6 @@ func Initialize(cfg config.Config) (*http.Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.Migrate(sqlxDB)
 	recipeRepository := repository.NewRecipeRepository(sqlxDB)
 	recipeService := service.NewRecipeService(recipeRepository)
 	recipeHandler := handler.NewRecipeHandler(recipeService)

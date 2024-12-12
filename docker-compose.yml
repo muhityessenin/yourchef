@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13-alpine
+    container_name: youchef_db
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user_service:
+    build: ./user_service
+    env_file:
+      - ./user_service/.env
+    depends_on:
+      db:
+        condition: service_healthy  # Убедиться, что база данных готова
+    ports:
+      - "8001:8001"
+
+  recipe_service:
+    build: ./recipe_service
+    env_file:
+      - ./recipe_service/.env
+    depends_on:
+      db:
+        condition: service_healthy  # Убедиться, что база данных готова
+    ports:
+      - "8000:8000"
+
+  gateway_service:
+    build: ./gateway_service
+    env_file:
+      - ./gateway_service/.env
+    depends_on:
+      user_service:
+        condition: service_started  # Убедиться, что user_service запущен
+      recipe_service:
+        condition: service_started  # Убедиться, что recipe_service запущен
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
