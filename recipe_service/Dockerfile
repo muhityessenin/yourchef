@@ -10,10 +10,9 @@ RUN go build -o app ./cmd
 FROM alpine
 
 WORKDIR /app
-
+COPY --from=builder /build/.env ./.env
 COPY --from=builder /build/migrations ./migrations
 COPY --from=builder /build/app ./app
-COPY --from=builder /build/.env ./.env
 EXPOSE 8000
 
 ENTRYPOINT ["./app"]
