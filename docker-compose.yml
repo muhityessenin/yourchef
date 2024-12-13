@@ -5,17 +5,17 @@ services:
     image: postgres:13-alpine
     container_name: youchef_db
     env_file:
-      - ./.env
+      - .env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,32 +23,32 @@ services:
   user_service:
     build: ./user_service
     env_file:
-      - ./user_service/.env
+      - ./.env
     depends_on:
       db:
-        condition: service_healthy  # Убедиться, что база данных готова
+        condition: service_healthy
     ports:
       - "8001:8001"
 
   recipe_service:
     build: ./recipe_service
     env_file:
-      - ./recipe_service/.env
+      - ./.env
     depends_on:
       db:
-        condition: service_healthy  # Убедиться, что база данных готова
+        condition: service_healthy
     ports:
       - "8000:8000"
 
   gateway_service:
     build: ./gateway_service
     env_file:
-      - ./gateway_service/.env
+      - ./.env
     depends_on:
       user_service:
-        condition: service_started  # Убедиться, что user_service запущен
+        condition: service_started
       recipe_service:
-        condition: service_started  # Убедиться, что recipe_service запущен
+        condition: service_started
     ports:
       - "8080:8080"
 
