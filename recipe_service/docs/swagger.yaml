@@ -1,0 +1,143 @@
+definitions:
+  handler.InputIngredient:
+    properties:
+      ingredients:
+        items:
+          type: string
+        type: array
+    type: object
+  handler.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  recipe.Entity:
+    properties:
+      category:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/recipe.Ingredient'
+        type: array
+      instructions:
+        items:
+          $ref: '#/definitions/recipe.Step'
+        type: array
+      matching:
+        type: string
+      title:
+        type: string
+      usedIngredientCount:
+        type: integer
+    type: object
+  recipe.Ingredient:
+    properties:
+      amount:
+        type: number
+      id:
+        type: integer
+      name:
+        type: string
+      unit:
+        type: string
+    type: object
+  recipe.Step:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/recipe.Ingredient'
+        type: array
+      number:
+        type: integer
+      step:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /recipes:
+    post:
+      consumes:
+      - application/json
+      description: Returns a list of recipes based on the provided ingredients
+      parameters:
+      - description: Array of ingredients, e.g., {\
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.InputIngredient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with a list of recipes
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: 'Bad Request: Invalid input or empty array'
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Recipes by Ingredients
+      tags:
+      - recipes
+  /recipes/{id}:
+    get:
+      description: Returns a recipe with the specified ID
+      parameters:
+      - description: Recipe ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Details of the recipe
+          schema:
+            $ref: '#/definitions/recipe.Entity'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Recipe By ID
+      tags:
+      - recipes
+  /recipes/random:
+    get:
+      description: Returns a list of random recipes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of random recipes
+          schema:
+            items:
+              $ref: '#/definitions/recipe.Entity'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Random Recipes
+      tags:
+      - recipes
+swagger: "2.0"

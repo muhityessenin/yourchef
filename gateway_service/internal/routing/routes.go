@@ -30,14 +30,13 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 		// Обновляем путь, если необходимо. Предположим, в user_service маршрут /register без /users
 		// Если в user_service маршрут "/register", то можно не менять путь.
 		c.Request.URL.Path = "/register"
+		fmt.Println(cfg.UserServiceURL)
 		proxy.ProxyRequest(c, cfg.UserServiceURL)
 	})
 
 	r.POST("/login", func(c *gin.Context) {
 		c.Request.URL.Path = "/login"
-		fmt.Println(c.Request.URL.Path)
 		fmt.Println(cfg.UserServiceURL)
-		fmt.Println(cfg.RecipeServiceURL)
 		proxy.ProxyRequest(c, cfg.UserServiceURL)
 	})
 	authGroup := r.Group("/")
@@ -47,7 +46,7 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 		authGroup.Any("recipe/*path", func(c *gin.Context) {
 			path := c.Param("path")
 			c.Request.URL.Path = path
-
+			fmt.Println(cfg.RecipeServiceURL)
 			proxy.ProxyRequest(c, cfg.RecipeServiceURL)
 		})
 

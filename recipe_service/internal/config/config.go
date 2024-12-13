@@ -22,7 +22,6 @@ func LoadConfig() (cfg Config, err error) {
 	if err != nil {
 		return
 	}
-	fmt.Println(root)
 	err = godotenv.Load(filepath.Join(root, ".env"))
 	if err != nil {
 		return cfg, nil

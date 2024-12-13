@@ -19,7 +19,7 @@ func LoadConfig() *Config {
 	}
 	return &Config{
 		JWTSecret:        os.Getenv("JWT_SECRET"),
-		UserServiceURL:   os.Getenv("USER_SERVICE_URL"),
-		RecipeServiceURL: os.Getenv("RECIPE_SERVICE_URL"),
+		UserServiceURL:   "http://user_service:8001",
+		RecipeServiceURL: "http://recipe_service:8000",
 	}
 }

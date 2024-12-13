@@ -3,7 +3,6 @@ package handler
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"user_service/internal/domain/user"
@@ -29,35 +28,41 @@ func (u *UserHandler) Login(c *gin.Context) {
 		Password string `json:"password"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		res := pkg.Response{Status: http.StatusCreated, Message: "invalid input", Data: "error"}
+		c.JSON(http.StatusBadRequest, res)
 		return
 	}
 	res, err := u.UserService.Login(input.Email, input.Password)
 	if err != nil {
 		if res == http.StatusNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			ans := pkg.Response{Status: http.StatusNotFound, Message: "user not found"}
+			c.JSON(http.StatusNotFound, ans)
 			return
 		}
 		if res == http.StatusUnauthorized {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+			ans := pkg.Response{Status: http.StatusUnauthorized, Message: "unauthorized"}
+			c.JSON(http.StatusUnauthorized, ans)
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ans := pkg.Response{Status: http.StatusInternalServerError, Message: "server error"}
+		c.JSON(http.StatusInternalServerError, ans)
 		return
 	}
 	if res == http.StatusOK {
 		output, err := u.UserService.SearchUser("email", input.Email)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ans := pkg.Response{Status: http.StatusNotFound, Message: "user not found"}
+			c.JSON(http.StatusInternalServerError, ans)
 		}
 		token, err = user.GenerateToken(&output[0])
-		fmt.Println(token)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			res := pkg.Response{Status: http.StatusInternalServerError, Message: "server error"}
+			c.JSON(http.StatusInternalServerError, res)
 			return
 		}
 	}
-	c.JSON(http.StatusOK, gin.H{"data": token})
+	ans := pkg.Response{Status: http.StatusOK, Message: "success", Data: token}
+	c.JSON(http.StatusOK, ans)
 }
 
 func (u *UserHandler) GetUsers(c *gin.Context) {
