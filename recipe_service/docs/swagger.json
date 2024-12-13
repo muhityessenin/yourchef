@@ -4,7 +4,7 @@
         "contact": {}
     },
     "paths": {
-        "/recipes": {
+        "/recipe": {
             "post": {
                 "description": "Returns a list of recipes based on the provided ingredients",
                 "consumes": [
@@ -50,7 +50,7 @@
                 }
             }
         },
-        "/recipes/random": {
+        "/recipe/random": {
             "get": {
                 "description": "Returns a list of random recipes",
                 "produces": [
@@ -79,7 +79,7 @@
                 }
             }
         },
-        "/recipes/{id}": {
+        "/recipe/{id}": {
             "get": {
                 "description": "Returns a recipe with the specified ID",
                 "produces": [

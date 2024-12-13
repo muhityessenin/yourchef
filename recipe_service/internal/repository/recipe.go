@@ -104,7 +104,7 @@ func (p RecipeRepository) GetRecipes(ingredients []string) ([]recipe.Entity, err
 	}
 
 	for i := range recipes {
-		matchingPercentage := (float64(recipes[i].UsedIngredientCount) / float64(len(ingredients))) * 100
+		matchingPercentage := min((float64(recipes[i].UsedIngredientCount)/float64(len(ingredients)))*100, 100)
 		matchingString := fmt.Sprintf("%.2f%%", matchingPercentage)
 		recipes[i].Matching = matchingString
 	}
@@ -115,7 +115,6 @@ func (p *RecipeRepository) GetRecipeById(id string) (recipe.Entity, error) {
 		"https://api.spoonacular.com/recipes/%s/analyzedInstructions?apiKey=%s",
 		id, os.Getenv("API_KEY"))
 	resp, err := http.Get(url)
-	fmt.Println("Request URL:", url)
 	if err != nil {
 		return recipe.Entity{}, fmt.Errorf("error making request: %v", err)
 	}

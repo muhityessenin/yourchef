@@ -33,7 +33,7 @@ func NewRecipeHandler(service interfaces.RecipeService) *RecipeHandler {
 // @Success      200    {object}  Response         "Success response with a list of recipes"
 // @Failure      400    {object}  Response         "Bad Request: Invalid input or empty array"
 // @Failure      500    {object}  Response         "Internal Server Error"
-// @Router       /recipes [post]
+// @Router       /recipe [post]
 func (handler *RecipeHandler) GetRecipeList(ctx *gin.Context) {
 	var input struct {
 		Input []string `json:"input"`
@@ -69,7 +69,7 @@ func (handler *RecipeHandler) GetRecipeList(ctx *gin.Context) {
 // @Success      200  {object}  recipe.Entity   "Details of the recipe"
 // @Failure      400  {object}  Response
 // @Failure      500  {object}  Response
-// @Router       /recipes/{id} [get]
+// @Router       /recipe/{id} [get]
 func (handler *RecipeHandler) GetRecipeById(ctx *gin.Context) {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -94,7 +94,7 @@ func (handler *RecipeHandler) GetRecipeById(ctx *gin.Context) {
 // @Produce      json
 // @Success      200 {object} []recipe.Entity  "List of random recipes"
 // @Failure      500 {object} Response
-// @Router       /recipes/random [get]
+// @Router       /recipe/random [get]
 func (handler *RecipeHandler) GetRandomRecipes(ctx *gin.Context) {
 	res, err := handler.RecipeService.GetRandomRecipes()
 	if err != nil {

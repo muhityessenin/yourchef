@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/recipes": {
+        "/recipe": {
             "post": {
                 "description": "Returns a list of recipes based on the provided ingredients",
                 "consumes": [
@@ -61,7 +61,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/recipes/random": {
+        "/recipe/random": {
             "get": {
                 "description": "Returns a list of random recipes",
                 "produces": [
@@ -90,7 +90,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/recipes/{id}": {
+        "/recipe/{id}": {
             "get": {
                 "description": "Returns a recipe with the specified ID",
                 "produces": [
